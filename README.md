@@ -2,13 +2,13 @@ coffeerest-api
 ==============
 Unfancy rest apis
 
-<img alt="" src="coffeerest.png"/>
+<img alt="" src="coffeerest.png" width:"20%" align="left"/>
 
 ## Ouch! Is it that simple?
 
 Your `model.coffee` specification 
 
-    module.exports = {
+    module.exports = 
       name: "project foo"
       resources:
         '/book/:category':
