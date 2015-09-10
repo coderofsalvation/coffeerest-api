@@ -1,0 +1,8 @@
+#!/bin/bash 
+clear
+export PORT=4455 
+timeout 5 coffee server.coffee &
+sleep 1s
+curl -H 'Content-Type: application/json' http://localhost:$PORT/book -X POST --data '{"foo":"foobar"}'
+curl -H 'Content-Type: application/json' http://localhost:$PORT/book -X POST --data '{"foo":"foo"}'
+curl -H 'Content-Type: application/json' http://localhost:$PORT/book -X POST --data '{}'
