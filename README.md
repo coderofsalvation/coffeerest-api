@@ -2,7 +2,7 @@ coffeerest-api
 ==============
 Unfancy rest apis
 
-<img alt="" src="coffeerest.png" width="20%" />
+<img alt="" src="https://github.com/coderofsalvation/coffeerest-api/raw/master/coffeerest.png" width="20%" />
 
 ## Ouch! Is it that simple?
 
