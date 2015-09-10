@@ -1,13 +1,13 @@
 {
   "name": "coffeerest-api",
-  "version": "0.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Api scaffolding from a model specification in few lines of coffeescript OH MY",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cd test && ./run"
   },
   "author": "",
   "license": "ISC",

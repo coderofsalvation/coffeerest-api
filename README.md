@@ -4,8 +4,6 @@ Unfancy rest apis
 
 <img alt="" src="coffeerest.png"/>
 
-Api scaffolding using few lines of specifications
-
 ## Ouch! Is it that simple?
 
 Your `model.coffee` specification 
