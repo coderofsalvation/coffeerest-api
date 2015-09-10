@@ -1,6 +1,6 @@
 {
   "name": "coffeerest-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Api scaffolding from a model specification in few lines of coffeescript OH MY",
   "main": "index.js",
   "directories": {
@@ -11,6 +11,7 @@
   },
   "author": "",
   "license": "ISC",
+  "repository": "https://github.com:/coderofsalvation/coffeerest-api",
   "dependencies": {
     "JSV": "^4.0.2",
     "json-schema-defaults": "^0.1.1"
