@@ -6,7 +6,7 @@ lib        = require('./lib.coffee')
 server = restify.createServer { name:model.name }
 server.use restify.queryParser()
 server.use restify.bodyParser()
-server.use coffeerest server, model, lib 
+server.use coffeerest server, { "/v1":model, "/v2":model }, lib # multiversion support
 server.listen process.env.PORT, () ->
  console.log '%s listening at %s', server.name, server.url
 

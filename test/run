@@ -3,7 +3,9 @@ clear
 export PORT=4455 
 timeout 5 coffee server.coffee &
 sleep 1s
-curl -H 'Content-Type: application/json' http://localhost:$PORT/book -X POST --data '{"foo":"foobar"}'
-curl -H 'Content-Type: application/json' http://localhost:$PORT/book -X POST --data '{"foo":"foo"}'
-curl -H 'Content-Type: application/json' http://localhost:$PORT/book -X POST --data '{}'
+curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/book -X POST --data '{"foo":"foobar"}'
+curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/book -X POST --data '{"foo":"foo"}'
+curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/book -X POST --data '{}'
+[[ -d ../node_modules/coffeerest-api-doc ]] &&
+  curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/doc 
 exit 0

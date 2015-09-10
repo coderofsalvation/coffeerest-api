@@ -50,24 +50,24 @@ Your `model.coffee` specification
     server = restify.createServer { name:model.name }
     server.use restify.queryParser()
     server.use restify.bodyParser()
-    server.use coffeerest server, model, lib 
+    server.use coffeerest server, { "/v1":model }, lib  # multiversion support
     server.listen process.env.PORT || 8080, () ->
       console.log '%s listening at %s', server.name, server.url
 
 Done!
 
     $ coffee server.coffee
-    registering REST resource: /books/:action (post)
-    registering REST resource: /book (post)
+    registering REST resource: /v1/books/:action (post)
+    registering REST resource: /v1/book (post)
     project foo listening at http://0.0.0.0:4455
 
-    $ curl -H 'Content-Type: application/json' http://localhost:$PORT/book -X POST --data '{"foo":"foobar"}'
+    $ curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/book -X POST --data '{"foo":"foobar"}'
     {"code":0,"message":"feeling groovy","kind":"default","data":[1,2,3],"errors":{}}
 
-    $ curl -H 'Content-Type: application/json' http://localhost:$PORT/book -X POST --data '{"foo":"foo"}'
+    $ curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/book -X POST --data '{"foo":"foo"}'
     {"code":2,"message":"your payload is invalid (is object? content-type is application/json?)","kind":"default","data":{},"errors":[{"uri":"/foo","message":"String is less than the required minimum length","attribute":"minLength","details":5}]}
     
-    $ curl -H 'Content-Type: application/json' http://localhost:$PORT/book -X POST --data '{}'
+    $ curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/book -X POST --data '{}'
     "code":2,"message":"your payload is invalid (is object? content-type is application/json?)","kind":"default","data":{},"errors":[{"uri":"/foo","message":"Property is required","attribute":"required","details":true}]}
 
     

@@ -2,7 +2,7 @@ module.exports = {
   name: "project foo"
   resources:
     '/books/:action':
-      post:
+      get:
         description: 'do something with a book'
         function: (req, res, next,lib, reply) ->
           lib[ req.params.action ]() if lib[ req.params.action ]?
@@ -12,7 +12,7 @@ module.exports = {
       post:
         description: 'adds a book'
         payload:
-          foo: { type: "string", minLength: 5, required: true }
+          foo: { type: "string", minLength: 5, required: true, default: "bar" }
         function: (req, res, next,lib, reply) ->
           reply.data = [1,2,3]
           return reply 
