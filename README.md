@@ -36,9 +36,9 @@ Your `model.coffee` specification
           errors:     { type: 'object' }
 ## Extensions 
 
-* coffeerest-api-doc        (automatic html and markdown REST-documentation) *TODO*
-* coffeerest-api-clients    (automatic REST clients) *TODO*
-* coffeerest-api-jugglingdb (connect any database to bind data to rest resources ) *TODO*
+* [coffeerest-api-doc](https://www.npmjs.com/package/coffeerest-api-doc): automatic html and markdown REST-documentation
+* coffeerest-api-clients:  automatic REST clients) *TODO*
+* coffeerest-api-jugglingdb: connect any database to bind data to rest resources ) *TODO*
 
 ## Example servercode 
 
