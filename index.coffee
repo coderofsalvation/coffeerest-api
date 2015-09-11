@@ -7,10 +7,10 @@ module.exports = (server, models, lib) ->
   for urlprefix,model of models
     ( (urlprefix,model) ->
       # load extensions
-      glob __dirname+"/node_modules/coffeerest-api-*", {}, (err,modules) ->
+      glob __dirname+"/../coffeerest-api-*", {}, (err,modules) ->
         for extension in modules
           console.log "loading extension: "+path.basename extension
-          module = require path.basename extension 
+          module = require './../'+path.basename extension 
           module server, model, lib, urlprefix
         # init api
         for url,methods of model.resources
