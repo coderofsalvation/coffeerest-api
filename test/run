@@ -1,13 +1,28 @@
 #!/bin/bash 
+request(){
+  echo "curl $*"
+  curl -s -H 'Content-Type: application/json' "$@"
+  echo ""
+}
+
 clear
+redis-cli flushdb
 export PORT=4455 
-coffee server.coffee 
-exit 1
-timeout 5 coffee server.coffee &
-sleep 2s
-curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/book -X POST --data '{"foo":"foobar"}'
-curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/book -X POST --data '{"foo":"foo"}'
-curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/book -X POST --data '{}'
-[[ -d ../node_modules/coffeerest-api-doc ]] &&
-  curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/doc/html
+coffee server.coffee &
+pid=$!
+read -p "press a key to run tests.." p
+if [[ -d node_modules/coffeerest-api-db ]]; then 
+  # basic CRUD
+  request -X POST http://localhost:$PORT/v1/article --data '{"title":"foo","content":"bar"}' 
+  request http://localhost:$PORT/v1/article/1 
+  request -X PUT http://localhost:$PORT/v1/article/1 --data '{"title":"flopje", "content":"bar"}' 
+  request http://localhost:$PORT/v1/article/1 
+  request -X DELETE http://localhost:$PORT/v1/article/1 
+  exit
+fi
+[[ -d node_modules/coffeerest-api-doc ]] &&
+  request http://localhost:$PORT/v1/doc/html
+request http://localhost:$PORT/v1/book -X POST --data '{"foo":"foobar"}'
+request http://localhost:$PORT/v1/book -X POST --data '{"foo":"foo"}'
+request http://localhost:$PORT/v1/book -X POST --data '{}'
 exit 0

@@ -16,7 +16,51 @@ module.exports = {
       php: "$json = '{{payload}}';\n$ch = curl_init( '{{url}}' );\ncurl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper('{{method}}') );\ncurl_setopt($ch, CURLOPT_POSTFIELDS, $json);\ncurl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\ncurl_setopt($ch, CURLOPT_HTTPHEADER, array(\n\t'Content-Type: application/json',\n\t'Content-Length: ' . strlen($json))\n);\n$result = curl_exec($ch);\n// HINT: use a REST client like https://github.com/bproctor/rest\n//       or install one using composer: http://getcomposer.org"
       python: "import requests, json\nurl = '{{url}}'\ndata = json.dumps( {{payload}} )\nr = requests.post( url, data, auth=('user', '*****'))\nprint r.json"
 
-           
+  db: 
+    type: "redis"
+    config:
+      port: 6379
+    acl:
+      create: ["*"]
+      read:   ["*"]
+      update: ["*"]
+      delete: ["*"]
+    resources:
+      article:
+        schema:
+          taggable: true
+          description: "this foo bar"
+          properties:
+            id:
+              type: "integer"
+            title: 
+              type: "string"
+              length: 255
+              default: "title not set"
+              required: true
+              index: true
+            content:
+              type: "string"
+              default: "Lorem ipsum"
+              typehint: "content"
+              required: true
+            date:
+              type: "string"
+              typehint: "date"
+              default: "Date.now"
+
+        belongsTo:
+          user:      { as: 'user', foreignKey: 'user_id' }
+      user:
+        schema:
+          taggable: true
+          description: "author"
+          properties:
+            id:      { type: "integer", default: 123, requiretag: ["admin"] }
+            email:   { type: "string", required:true, default: 'John Doe', requiretag: ["admin"] }
+            apikey:  { type: "string",  required: true, default: "john@doe.com", pattern: "/\S+@\S+\.\S+/" }
+        hasMany:
+          article: { as: 'articles', foreignKey: 'user_id' }
 
   resources:
     '/do/:action':
@@ -48,6 +92,7 @@ module.exports = {
       0: 'feeling groovy'
       1: 'unknown error'
       2: 'your payload is invalid (is object? content-type is application/json?)'
+      3: 'data error'
     properties:
       code:       { type: 'integer', default: 0 }
       message:    { type: 'string',  default: 'feeling groovy' }
