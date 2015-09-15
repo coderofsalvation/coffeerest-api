@@ -1,4 +1,6 @@
 #!/bin/bash 
+export ADMIN_TOKEN=foobar
+
 request(){
   echo "curl $*"
   curl -s -H 'Content-Type: application/json' "$@"
@@ -13,11 +15,20 @@ pid=$!
 read -p "press a key to run tests.." p
 if [[ -d node_modules/coffeerest-api-db ]]; then 
   # basic CRUD
-  request -X POST http://localhost:$PORT/v1/article --data '{"title":"foo","content":"bar"}' 
-  request http://localhost:$PORT/v1/article/1 
-  request -X PUT http://localhost:$PORT/v1/article/1 --data '{"title":"flopje", "content":"bar"}' 
-  request http://localhost:$PORT/v1/article/1 
-  request -X DELETE http://localhost:$PORT/v1/article/1 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X POST http://localhost:$PORT/v1/article --data '{"title":"foo","content":"bar"}' 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN http://localhost:$PORT/v1/article/1 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X PUT http://localhost:$PORT/v1/article/1 --data '{"title":"flopje", "content":"bar"}' 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN http://localhost:$PORT/v1/article/1 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X DELETE http://localhost:$PORT/v1/article/1 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X POST http://localhost:$PORT/v1/user --data '{"email":"foo@hotmail.com","apikey":"flop", "roles":["admin","user"]}' 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN http://localhost:$PORT/v1/user/1 
+  request -H 'X-FOO-TOKEN: fflop' -X GET  http://localhost:$PORT/v1/user/1 
+  request -H 'X-FOO-TOKEN: fflop' -X GET  http://localhost:$PORT/v1/article/1 
+  request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/1 
+  request -H 'X-FOO-TOKEN: flop'  -X PUT  http://localhost:$PORT/v1/user/1 --data '{"email": "flop@bar.com","apikey":"flop"}'
+  exit 
+  request -H 'X-FOO-TOKEN: flop'  -X POST http://localhost:$PORT/v1/user/tag --data '{"name":"can update profile","permissions":[{"resource":"/user/:id","method":"get","fields":["email"]}]}' 
+  request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/tag/1 
   exit
 fi
 [[ -d node_modules/coffeerest-api-doc ]] &&
