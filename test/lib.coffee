@@ -1,4 +1,6 @@
-module.exports =
+module.exports = {
 
-  foo = () ->
+  foo: () ->
     console.log "foo!"
+
+}

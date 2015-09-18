@@ -1,4 +1,5 @@
 module.exports = {
+  host: "localhost:4040"
   doc:
     version: 1
     projectname: "Foo"
@@ -16,57 +17,74 @@ module.exports = {
       php: "$json = '{{payload}}';\n$ch = curl_init( '{{url}}' );\ncurl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper('{{method}}') );\ncurl_setopt($ch, CURLOPT_POSTFIELDS, $json);\ncurl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\ncurl_setopt($ch, CURLOPT_HTTPHEADER, array(\n\t'Content-Type: application/json',\n\t'Content-Length: ' . strlen($json))\n);\n$result = curl_exec($ch);\n// HINT: use a REST client like https://github.com/bproctor/rest\n//       or install one using composer: http://getcomposer.org"
       python: "import requests, json\nurl = '{{url}}'\ndata = json.dumps( {{payload}} )\nr = requests.post( url, data, auth=('user', '*****'))\nprint r.json"
 
+  #oauth:
+  #  provider1:
+  #    'key': '...'
+  #    'secret': '...'
+  #    'scope': [
+  #      'scope1'
+  #      'scope2'
+  #    ]
+  #    'callback': '/provider1/callback'
+
+  security:
+    header_token: "X-Foo-Token"
+
   db: 
-    type: "redis"
     config:
-      port: 6379
-    acl:
-      header_token: "X-FOO-TOKEN" 
-      roles:
-        default: { create: ["*"]     , read:   ["*"]     , update: ["*"]       , delete: ["*"] }
-        user:    { create: ["user"]  , read:   ["user"]  , update: ["user"]    , delete: ["user"] }
-        admin:   { create: ["admin"] , update: ["admin"] , delete: ["admin"] }
+      connections:
+        default:
+          adapter: 'memory'
+        memory: 
+          adapter: 'memory'
+        #myLocalDisk: 
+        #  adapter: 'disk'
+        #myLocalMySql:
+        #  adapter: 'mysql'
+        #  host: 'localhost'
+        #  database: 'foobar'
+      defaults: 
+        migrate: 'alter'  
 
     resources:
       article:
+        connection: 'memory'
         schema:
-          taggable: true
           authenticate: true
           description: "this foo bar"
+          taggable: true
+          owner: "user"
+          required: ['title','content']
           payload:
             title: 
               type: "string"
-              length: 255
               default: "title not set"
-              required: true
+              minLength: 2
+              maxLength: 40
               index: true
             content:
               type: "string"
               default: "Lorem ipsum"
-              typehint: "content"
-              required: true
             date:
               type: "string"
-              typehint: "date"
-              default: "Date.now"
-                
-        belongsTo:
-          user:      { as: 'user', foreignKey: 'user_id' }
+              default: "2012-02-02"
+
       user:
+        connection: 'memory'
         schema:
-          taggable: true
           authenticate: true
+          taggable: true
           description: "author"
+          requiretag: ["is user","can update user","cannot update user email"]
+          required: ['email','apikey']
           payload:
-            email:   { type: "string",  required:true,  default: 'John Doe', pattern: "[@\.]" }
-            apikey:  { type: "string",  required:true, default: "john@doe.com", index:true }
-        hasMany:
-          article: { as: 'articles', foreignKey: 'user_id' }
+            email:   { type: "string", default: 'John Doe', pattern: "[@\.]" }
+            apikey:  { type: "string", default: "john@doe.com", index:true }
 
   resources:
-    '/do/:action':
+    '/ping':
       get:
-        description: 'do something where ":action" can be "process" or "cancel"'
+        description: 'earth to api'
         function: (req, res, next,lib, reply) ->
           lib[ req.params.action ]() if lib[ req.params.action ]?
           return reply 
@@ -80,8 +98,9 @@ module.exports = {
       post:
         description: 'adds a book'
         notes: 'duplicates are not allowed'
+        required: ['foo']
         payload:
-          foo: { type: "string", minLength: 5, required: true, default: "bar" }
+          foo: { type: "string", minLength: 5, default: "bar" }
         function: (req, res, next,lib, reply) ->
           reply.data = [1,2,3]
           return reply 

@@ -3,7 +3,7 @@ export ADMIN_TOKEN=foobar
 
 request(){
   echo "curl $*"
-  curl -s -H 'Content-Type: application/json' "$@"
+  curl  -s -H 'Content-Type: application/json' "$@"
   echo ""
 }
 
@@ -16,19 +16,44 @@ read -p "press a key to run tests.." p
 if [[ -d node_modules/coffeerest-api-db ]]; then 
   # basic CRUD
   request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X POST http://localhost:$PORT/v1/article --data '{"title":"foo","content":"bar"}' 
-  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN http://localhost:$PORT/v1/article/1 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X GET  http://localhost:$PORT/v1/article/all 
   request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X PUT http://localhost:$PORT/v1/article/1 --data '{"title":"flopje", "content":"bar"}' 
   request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN http://localhost:$PORT/v1/article/1 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN http://localhost:$PORT/v1/article/1 
   request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X DELETE http://localhost:$PORT/v1/article/1 
-  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X POST http://localhost:$PORT/v1/user --data '{"email":"foo@hotmail.com","apikey":"flop", "roles":["admin","user"]}' 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X POST http://localhost:$PORT/v1/user --data '{"email":"foo@hotmail.com","apikey":"flop"}' 
   request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN http://localhost:$PORT/v1/user/1 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X POST http://localhost:$PORT/v1/user/tag --data '{"name":"is user"}' 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X POST http://localhost:$PORT/v1/user/tag --data '{"name":"is admin user"}' 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X POST http://localhost:$PORT/v1/user/tag --data '{"name":"can update user","subtags":["can create,read,update user email"]}' 
+  # tag user (handy generic purposes: activity/role based permissions, categories etc)
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X GET http://localhost:$PORT/v1/user/tag/1/1/enable
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X GET http://localhost:$PORT/v1/user/tag/1/2/enable
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X GET http://localhost:$PORT/v1/user/tag/1/all 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X GET http://localhost:$PORT/v1/user/tag/1/2/disable
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X GET http://localhost:$PORT/v1/user/tag/1/all 
+  # get user using user-specific apikey
   request -H 'X-FOO-TOKEN: fflop' -X GET  http://localhost:$PORT/v1/user/1 
-  request -H 'X-FOO-TOKEN: fflop' -X GET  http://localhost:$PORT/v1/article/1 
-  request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/1 
-  request -H 'X-FOO-TOKEN: flop'  -X PUT  http://localhost:$PORT/v1/user/1 --data '{"email": "flop@bar.com","apikey":"flop"}'
-  exit 
-  request -H 'X-FOO-TOKEN: flop'  -X POST http://localhost:$PORT/v1/user/tag --data '{"name":"can update profile","permissions":[{"resource":"/user/:id","method":"get","fields":["email"]}]}' 
-  request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/tag/1 
+  request -H 'X-FOO-TOKEN: flop'  -X GET http://localhost:$PORT/v1/user/1?populate=tags 
+  # try updating email without having permission for it
+  request -H 'X-FOO-TOKEN: flop' -X PUT  http://localhost:$PORT/v1/user/1 --data '{"email":"foo@barrrr.com","apikey":"flop"}' 
+  request -H 'X-FOO-TOKEN: '$ADMIN_TOKEN -X GET http://localhost:$PORT/v1/user/tag/1/3/enable
+  request -H 'X-FOO-TOKEN: flop' -X PUT  http://localhost:$PORT/v1/user/1 --data '{"email":"foo@barrrr.com","apikey":"flop"}' 
+  #request -H 'X-FOO-TOKEN: flop'  -X GET http://localhost:$PORT/v1/user/tag/1/1/disable
+  #request -H 'X-FOO-TOKEN: fflop' -X GET  http://localhost:$PORT/v1/article/1 
+  #request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/all 
+  #request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/tag/all 
+  #request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/1 
+  #request -H 'X-FOO-TOKEN: flop'  -X PUT  http://localhost:$PORT/v1/user/1 --data '{"email": "flop@bar.com","apikey":"flop"}'
+  #request -H 'X-FOO-TOKEN: flop'  -X POST http://localhost:$PORT/v1/user/tag --data '{"name":"can create,read,update article"}' 
+  #request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/tag/1 
+  #request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/all 
+  #request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/tag/all 
+  #request -H 'X-FOO-TOKEN: flop'  -X POST http://localhost:$PORT/v1/article --data '{"title":"foo","content":"bar"}' 
+  #request -H 'X-FOO-TOKEN: flop'  -X PUT  http://localhost:$PORT/v1/user/1 --data '{"email": "flop@bar.com","apikey":"flop","tags_ids":[1,3]}'
+  #request -H 'X-FOO-TOKEN: flop'  -X GET  http://localhost:$PORT/v1/user/1
+  #request -H 'X-FOO-TOKEN: flop'  -X PUT  http://localhost:$PORT/v1/article/1 --data '{"title":"foo", "content": "bar2"}'
+  sleep 1s
   exit
 fi
 [[ -d node_modules/coffeerest-api-doc ]] &&
