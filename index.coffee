@@ -4,12 +4,16 @@ JSVD = require('json-schema-defaults')
 glob = require('glob')
 path = require('path')
 validate_schema = require('./validate.coffee')
+asyncEventEmitter = require('async-eventemitter');
 fs   = require 'fs'
 extend = require 'extend'
 
 module.exports = (server, models, lib) ->
   lib.extensions = {}
   me = @
+
+  # synchronous event handler
+  lib.events      = new asyncEventEmitter()
 
   for urlprefix,model of models
     ( (urlprefix,model) ->
@@ -29,8 +33,8 @@ module.exports = (server, models, lib) ->
         # load extensions
         for modulename in modulenames
           console.log "loading extension: "+modulename
-          module = require './../'+modulename
-          lib.extensions[ modulename ] = module server, model, lib, urlprefix
+          lib.extensions[ modulename ] = require( './../'+modulename )(server,model,lib,urlprefix)
+        lib.events.emit 'beforeStart', { server:server, model:model, lib:lib,urlprefix:urlprefix }
         # init api
         for url,methods of model.resources
           for method,resource of methods
