@@ -30,6 +30,25 @@ module.exports = {
   security:
     header_token: "X-Foo-Token"
 
+  query_params: [
+    {
+      id: "#/query_params/populate"
+      description: "adds relational data to the result"
+      type:"array"
+      items:[{type:"string"}]
+    },{
+      id: "#/query_params/populate2"
+      description: "adds relational data to the result"
+      type:"array"
+      items:[{type:"string"}]
+    },{
+      id: "#/query_params/populate3"
+      description: "adds relational data to the result"
+      type:"array"
+      items:[{type:"string"}]
+    }
+  ]
+
   db: 
     config:
       connections:
@@ -98,6 +117,10 @@ module.exports = {
       post:
         description: 'adds a book'
         notes: 'duplicates are not allowed'
+        query_params: 
+          populate:  { param: {"$ref": "#/query_params/populate"}, values: ["authors","tags"] }
+          populate2: { param: {"$ref": "#/query_params/populate2"}, values: ["authors","tags"] }
+          populate3: { param: {"$ref": "#/query_params/populate3"}, values: ["authors","tags"] }
         required: ['foo']
         payload:
           foo: { type: "string", minLength: 5, default: "bar" }

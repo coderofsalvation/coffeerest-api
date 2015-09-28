@@ -4,6 +4,18 @@ module.exports = {
   properties:
     host:
       type: 'string'
+    query_params:
+      type: "array"
+      items: [{
+        type: "object"
+        required: ["id","description","type"]
+        properties:
+          id: { type: "string" }
+          description: { type: 'string'  }
+          type: { type: "string" }
+          items: { type: "array" }
+      }]
+
     resources:
       type: 'object'
       properties:

@@ -1,12 +1,12 @@
-#JSV = require('JSV').JSV.createEnvironment()
-JSV = require('ajv')()
-JSVD = require('json-schema-defaults')
-glob = require('glob')
-path = require('path')
-validate_schema = require('./validate.coffee')
+JSV               = require('ajv')()
+JSVD              = require('json-schema-defaults')
+glob              = require('glob')
+path              = require('path')
+validate_schema   = require('./validate.coffee')
 asyncEventEmitter = require('async-eventemitter');
-fs   = require 'fs'
-extend = require 'extend'
+fs                = require 'fs'
+extend            = require 'extend'
+jsonref           = require('json-ref-lite')()
 
 module.exports = (server, models, lib) ->
   lib.extensions = {}
@@ -22,11 +22,14 @@ module.exports = (server, models, lib) ->
       glob __dirname+"/../coffeerest-api-*", {}, (err,modules) ->
         modulenames = []
         modulenames.push path.basename extension for extension in modules
-        # validate extension ( model )
+        # combine models into one model
         for modulename in modulenames
           extmodel = __dirname+'/../'+modulename+'/validate.coffee'
           ( console.error("cannot locate "+extmodel) && process.exit 1) if not fs.existsSync extmodel
           extend true, validate_schema, require(extmodel)
+        # resolve jsonschema references 
+        model = jsonref.resolve model
+        # validate extension ( model )
         if not JSV.validate validate_schema, model
            console.error "## Error in model: "+JSON.stringify( JSV.errors, null, 2)+"\n\n## Your Model JSON:\n\n"
            console.dir model
