@@ -70,5 +70,14 @@ Done!
     $ curl -H 'Content-Type: application/json' http://localhost:$PORT/v1/book -X POST --data '{}'
     "code":2,"message":"your payload is invalid (is object? content-type is application/json?)","kind":"default","data":{},"errors":[{"uri":"/foo","message":"Property is required","attribute":"required","details":true}]}
 
-    
+## Philosophy
+
+Dont generate code based on config (Yeoman etc), but instead extend both code and config.
+Oh..and jsonschema, because jsonschema.
+
+## Magic 
+
+* ignore certain extensions 
+
+| pass environment var COFFEEREST_EXT_IGNORE with value '(db|frontend)' to ignore all coffeerest extensions which match either 'db' or 'frontend'
 
