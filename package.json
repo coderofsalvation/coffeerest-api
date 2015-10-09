@@ -1,6 +1,6 @@
 {
   "name": "coffeerest-api",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "description": "Api scaffolding from a model specification in few lines of coffeescript OH MY",
   "main": "index.js",
   "directories": {
