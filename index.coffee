@@ -6,7 +6,7 @@ validate_schema   = require('./validate.coffee')
 asyncEventEmitter = require('async-eventemitter');
 fs                = require 'fs'
 extend            = require 'extend'
-jsonref           = require('json-ref-lite')()
+jsonref           = require('json-ref-lite')
 
 module.exports = (server, models, lib) ->
   lib.extensions = {}
