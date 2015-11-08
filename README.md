@@ -9,6 +9,7 @@ Unfancy rest apis
 Your `model.coffee` specification 
 
     module.exports = 
+      host: process.env.HOST || "localhost:8080"
       name: "project foo"
       resources:
         '/book/:category':
@@ -18,7 +19,7 @@ Your `model.coffee` specification
               foo: { type: "string", minLength: 5, required: true }
             function: (req, res, next,lib, reply) ->
               category = req.params.category
-              reply.data = [1,2,3]
+              reply.data = [1,2, lib.foo() ]
               return reply 
               
       replyschema:
@@ -27,8 +28,10 @@ Your `model.coffee` specification
         messages:
           0: 'feeling groovy'
           1: 'unknown error'
-          2: 'your payload is invalid (is object? content-type is application/json?)'
-        properties:
+          2: 'your payload is invalid (is object? content-type is application/json?)'                                                                                           
+          3: 'data error'
+          4: 'access denied'
+        payload:
           code:       { type: 'integer', default: 0 }
           message:    { type: 'string',  default: 'feeling groovy' }
           kind:       { type: 'string',  default: 'default', enum: ['book','default'] }
@@ -45,7 +48,8 @@ Your `model.coffee` specification
     restify    = require('restify')        # here we use restify but express should be fine too
     coffeerest = require('coffeerest-api')
     model      = require('./model.coffee')
-    lib        = require('./lib.coffee')
+    lib        = 
+      foo: () -> return 3
 
     server = restify.createServer { name:model.name }
     server.use restify.queryParser()
